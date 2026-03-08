@@ -1,42 +1,131 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ==================================================
+   PIXIECODE DESIGN SYSTEM - V2 (HIGH CONVERSION)
+   DEEP TECH DARK + VIBRANT CTA
+================================================== */
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* ===== CORE COLORS (Psikologi: Profesional & Trust) ===== */
+  --pc-bg-deep: #020617;      /* Slate 950: Mewah & Kuat */
+  --pc-bg-card: #0f172a;      /* Slate 900: Kedalaman */
+  
+  /* ===== ACCENT COLORS (Psikologi: Kenyamanan & Fresh) ===== */
+  --pc-teal: #2dd4bf;         /* Teal: Pertumbuhan & Keseimbangan */
+  --pc-teal-glow: rgba(45, 212, 191, 0.4);
+
+  /* ===== ACTION COLORS (Psikologi: Urgensi & Beli) ===== */
+  --pc-action: #f97316;       /* Oranye: Antusiasme & Ramah */
+  --pc-action-hover: #ea580c; /* Oranye Gelap: Tekanan Beli */
+  --pc-urgency: #ef4444;      /* Merah: Urgensi Flash Sale */
+
+  --pc-text-main: #f8fafc;
+  --pc-text-soft: #94a3b8;
+
+  /* Glass Effects */
+  --pc-glass: rgba(15, 23, 42, 0.7);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
-html,
-body {
-  max-width: 100vw;
-  overflow-x: hidden;
-}
-
-body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-* {
-  box-sizing: border-box;
-  padding: 0;
+/* ==================================================
+   RESET & BODY
+================================================== */
+html, body {
+  min-height: 100%;
   margin: 0;
+  padding: 0;
+  background: var(--pc-bg-deep); /* Ganti dari ungu pudar ke hitam premium */
+  color: var(--pc-text-main);
+  overflow-x: hidden;
+  font-family: 'Plus Jakarta Sans', sans-serif;
 }
 
-a {
-  color: inherit;
-  text-decoration: none;
+/* ==================================================
+   GLOBAL BACKGROUND ENGINE (MESH GRADIENT ONLY)
+   🔥 CLEAN & OPTIMISTIC TECH VIBE
+================================================== */
+.bg-pixie {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background-color: var(--pc-bg-deep);
+  background-image: 
+    /* Teal Glow (Top Left) - Memberikan kesan fresh */
+    radial-gradient(circle at 70% 70%, rgba(45, 212, 191, 0.12) 0px, transparent 50%),
+    /* Purple/Blue Glow (Bottom Right) - Memberikan kesan mewah */
+    radial-gradient(circle at 100% 100%, rgba(99, 102, 241, 0.1) 0px, transparent 50%);
 }
 
-@media (prefers-color-scheme: dark) {
-  html {
-    color-scheme: dark;
-  }
+/* Grid Overlay dihapus agar tampilan lebih clean dan fokus pada konten produk */
+
+/* ==================================================
+   GLASSMORPHISM CARDS (DARK MODE)
+================================================== */
+.pixie-glass {
+  background: var(--pc-glass);
+  backdrop-filter: blur(12px);
+  border-radius: 1.5rem;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+}
+
+.pixie-card {
+  @apply pixie-glass p-6 transition-all duration-500 border border-slate-800/50;
+}
+
+.pixie-card:hover {
+  @apply -translate-y-2 border-teal-500/30;
+  box-shadow: 0 20px 40px -15px rgba(45, 212, 191, 0.15);
+}
+
+/* ==================================================
+   BUTTON SYSTEM (PSYCHOLOGICAL CTA)
+================================================== */
+
+/* Tombol "Beli/Checkout" - Oranye (Urgensi & Ramah) */
+.btn-buy {
+  @apply px-6 py-3 rounded-xl font-bold transition-all duration-300 flex items-center justify-center gap-2;
+  background: linear-gradient(135deg, var(--pc-action), #fb923c);
+  color: white;
+  box-shadow: 0 4px 15px rgba(249, 115, 22, 0.3);
+}
+
+.btn-buy:hover {
+  @apply scale-105;
+  background: var(--pc-action-hover);
+  box-shadow: 0 8px 25px rgba(249, 115, 22, 0.5);
+}
+
+/* Tombol Sekunder - Teal (Kenyamanan) */
+.btn-pixie {
+  @apply px-6 py-3 rounded-xl font-bold transition-all duration-300;
+  background: rgba(45, 212, 191, 0.1);
+  border: 1px solid var(--pc-teal);
+  color: var(--pc-teal);
+}
+
+.btn-pixie:hover {
+  background: var(--pc-teal);
+  color: var(--pc-bg-deep);
+}
+
+/* ==================================================
+   UTILITIES
+================================================== */
+.text-gradient-teal {
+  background: linear-gradient(135deg, #2dd4bf, #22d3ee);
+  -webkit-background-clip: text;
+  color: transparent;
+}
+
+.badge-sale {
+  @apply px-2 py-1 bg-red-500 text-white text-[10px] font-black rounded-md uppercase tracking-tighter;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% { opacity: 1; }
+  50% { opacity: 0.7; }
+  100% { opacity: 1; }
 }
