@@ -15,6 +15,7 @@ interface ContentProps {
   formattedPrice: string;
   pos: { x: number; y: number };
   onPreview: (e: React.MouseEvent) => void;
+  onAddCart: (e: React.MouseEvent) => void;
 }
 
 export default function ProductCardContent({ 
