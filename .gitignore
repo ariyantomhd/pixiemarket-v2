@@ -29,12 +29,6 @@ Thumbs.db
 *.swp
 *.swo
 
-# Admin Components & Sensitive Layouts
-src/components/admin/
-src/app/admin/
-src/lib/admin/
-src/hooks/admin/
-src/services/admin/
 
 # Local backup or testing files
 *.local.bak
