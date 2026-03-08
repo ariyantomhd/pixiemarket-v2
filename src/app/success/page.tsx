@@ -3,8 +3,10 @@
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { CheckCircle, Download, ArrowRight } from "lucide-react";
+import { Suspense } from "react"; // 1. Import Suspense
 
-export default function SuccessPage() {
+// 2. Pindahkan logika UI ke komponen terpisah
+function SuccessContent() {
   const searchParams = useSearchParams();
   const orderId = searchParams.get("orderId");
 
@@ -20,7 +22,7 @@ export default function SuccessPage() {
         MAGIC CONFIRMED!
       </h1>
       <p className="text-slate-400 max-w-md mb-8">
-        Payment successful for Order <span className="text-teal-400 font-mono">#{orderId?.slice(0, 8)}</span>. 
+        Payment successful for Order <span className="text-teal-400 font-mono">#{orderId?.slice(0, 8) || "N/A"}</span>. 
         Your digital assets are now ready in your vault.
       </p>
 
@@ -42,5 +44,19 @@ export default function SuccessPage() {
         </Link>
       </div>
     </div>
+  );
+}
+
+// 3. Export utama yang membungkus konten dengan Suspense
+export default function SuccessPage() {
+  return (
+    <Suspense fallback={
+      <div className="flex flex-col items-center justify-center min-h-[70vh]">
+        <div className="w-12 h-12 border-4 border-teal-500 border-t-transparent rounded-full animate-spin mb-4" />
+        <p className="text-slate-500 font-black tracking-widest uppercase text-xs">Loading Success Details...</p>
+      </div>
+    }>
+      <SuccessContent />
+    </Suspense>
   );
 }

@@ -13,6 +13,7 @@ interface QuickPreviewModalProps {
   onClose: () => void;
   product: Product;
   formattedPrice: string;
+  onAddToCart: () => void;
 }
 
 export default function QuickPreviewModal({

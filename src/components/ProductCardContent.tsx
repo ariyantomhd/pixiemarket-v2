@@ -1,11 +1,10 @@
 "use client";
 
 import Image from "next/image";
-import { ShoppingCart, Eye, Zap, ShoppingBag, Star } from "lucide-react"; // Tambah Icon
+import { ShoppingCart, Eye, Zap, ShoppingBag, Star } from "lucide-react";
 import { Product } from "@/types/product";
 import { pixieBranding } from "@/lib/branding";
 import { getTechColor } from "@/lib/techColors";
-import { useCartStore } from "@/store/useCartStore";
 import clsx from "clsx";
 
 interface ContentProps {
@@ -15,7 +14,7 @@ interface ContentProps {
   formattedPrice: string;
   pos: { x: number; y: number };
   onPreview: (e: React.MouseEvent) => void;
-  onAddCart: (e: React.MouseEvent) => void;
+  onAddToCart: (e: React.MouseEvent) => void; // <--- SUDAH SINKRON
 }
 
 export default function ProductCardContent({ 
@@ -24,16 +23,10 @@ export default function ProductCardContent({
   showSalesCount, 
   formattedPrice, 
   pos, 
-  onPreview 
+  onPreview,
+  onAddToCart // <--- TERIMA PROP DI SINI
 }: ContentProps) {
-  const addItem = useCartStore((state) => state.addItem);
   const displayImage = product.images?.[0] || "/placeholder.png";
-
-  const handleAddToCart = (e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    addItem(product);
-  };
 
   return (
     <div className={clsx(
@@ -73,12 +66,13 @@ export default function ProductCardContent({
         {/* Trending Icon */}
         {(product.is_trending || variant === "dark") && (
           <div className="absolute top-4 right-4 bg-orange-500 text-white p-2 rounded-xl shadow-lg animate-pulse z-20">
-            <Zap size={14} fill="currentColor" />
+            < Zap size={14} fill="currentColor" />
           </div>
         )}
         
         <div className="absolute inset-0 bg-slate-950/60 opacity-0 group-hover:opacity-100 transition-all duration-300 flex items-center justify-center z-20 backdrop-blur-sm">
           <button 
+            type="button"
             onClick={onPreview} 
             className="p-4 bg-white text-slate-950 rounded-2xl hover:bg-teal-500 hover:text-white transition transform hover:scale-110 shadow-2xl"
           >
@@ -94,13 +88,12 @@ export default function ProductCardContent({
             {product.category || "Digital Asset"}
           </span>
 
-          {/* SOLD COUNT & RATING (MARKETING INJECTION) */}
           {showSalesCount && (
             <div className="flex items-center gap-2">
               <div className="flex items-center gap-1 bg-white/5 px-2 py-1 rounded-lg border border-white/5">
                 <ShoppingBag size={10} className="text-orange-400" />
                 <span className="text-[9px] font-black text-white italic tracking-tighter">
-                  {product.sold_count || 0} <span className="text-slate-500 font-medium">SOLD</span>
+                  {product.sales_count || 0} <span className="text-slate-500 font-medium">SOLD</span>
                 </span>
               </div>
               <div className="flex items-center gap-0.5">
@@ -138,9 +131,9 @@ export default function ProductCardContent({
         {/* Pricing & CTA */}
         <div className="mt-7 flex items-center justify-between">
           <div>
-            {product.original_price && (
+            {product.price > 0 && (
               <p className="text-xs text-slate-500 line-through mb-0.5 tracking-tight font-medium">
-                ${product.original_price}
+                ${(product.price * 1.5).toFixed(2)}
               </p>
             )}
             <p className="text-2xl font-black tracking-tighter text-white italic">
@@ -149,7 +142,8 @@ export default function ProductCardContent({
           </div>
           
           <button 
-            onClick={handleAddToCart} 
+            type="button"
+            onClick={onAddToCart} // <--- PANGGIL LANGSUNG DARI PROP
             className="p-3.5 bg-gradient-to-br from-orange-500 to-orange-600 text-white rounded-2xl shadow-lg shadow-orange-500/20 hover:scale-110 active:scale-95 transition-all group/btn"
           >
             <ShoppingCart size={22} className="group-hover/btn:rotate-12 transition-transform" />

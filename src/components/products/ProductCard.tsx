@@ -42,7 +42,8 @@ export default function ProductCard({ product, variant = "default", showSalesCou
             formattedPrice={formattedPrice}
             pos={pos}
             onPreview={(e) => { e.preventDefault(); e.stopPropagation(); setShowGallery(true); }}
-            onAddCart={(e) => { e.preventDefault(); e.stopPropagation(); addItem(product); }}
+            // PASTIKAN NAMA PROP INI onAddToCart (SESUAI KESEPAKATAN KITA TADI)
+            onAddToCart={(e) => { e.preventDefault(); e.stopPropagation(); addItem(product); }}
           />
         </Link>
       </motion.div>

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, Suspense } from "react"; // 1. Tambahkan Suspense
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
@@ -10,8 +10,6 @@ import LegalModal from "@/components/modal/LegalModal";
 
 export default function LoginPage() {
   const [activeTab, setActiveTab] = useState<"login" | "register">("login");
-  
-  // State untuk kontrol modal legal (Terms & Privacy)
   const [legalModal, setLegalModal] = useState<"terms" | "privacy" | null>(null);
 
   return (
@@ -80,26 +78,32 @@ export default function LoginPage() {
 
           {/* Form Content */}
           <div className="p-8 pt-4">
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={activeTab}
-                initial={{ opacity: 0, x: activeTab === "login" ? -10 : 10 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: activeTab === "login" ? 10 : -10 }}
-                transition={{ duration: 0.2, ease: "easeOut" }}
-              >
-                {activeTab === "login" ? (
-                  <SignInForm />
-                ) : (
-                  /* SINKRONISASI MODAL DI SINI */
-                  <SignUpForm onOpenModal={(type) => setLegalModal(type)} />
-                )}
-              </motion.div>
-            </AnimatePresence>
+            {/* 2. Bungkus AnimatePresence dengan Suspense untuk menangani useSearchParams */}
+            <Suspense fallback={
+              <div className="flex items-center justify-center py-12">
+                <div className="w-6 h-6 border-2 border-teal-500 border-t-transparent rounded-full animate-spin" />
+              </div>
+            }>
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={activeTab}
+                  initial={{ opacity: 0, x: activeTab === "login" ? -10 : 10 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: activeTab === "login" ? 10 : -10 }}
+                  transition={{ duration: 0.2, ease: "easeOut" }}
+                >
+                  {activeTab === "login" ? (
+                    <SignInForm />
+                  ) : (
+                    <SignUpForm onOpenModal={(type) => setLegalModal(type)} />
+                  )}
+                </motion.div>
+              </AnimatePresence>
+            </Suspense>
           </div>
         </div>
 
-        {/* Footer Links - Trigger Modal */}
+        {/* Footer Links */}
         <div className="mt-8 flex justify-center gap-6 opacity-30 hover:opacity-100 transition-opacity">
           <button 
             onClick={() => setLegalModal("terms")}
@@ -117,9 +121,7 @@ export default function LoginPage() {
         </div>
       </motion.div>
 
-      {/* --- RENDER MODAL SEBAGAI LAYER TERLUAR --- */}
-      
-      {/* Terms Modal */}
+      {/* Legal Modals */}
       <LegalModal
         isOpen={legalModal === "terms"}
         onClose={() => setLegalModal(null)}
@@ -133,7 +135,6 @@ export default function LoginPage() {
         </div>
       </LegalModal>
 
-      {/* Privacy Modal */}
       <LegalModal
         isOpen={legalModal === "privacy"}
         onClose={() => setLegalModal(null)}
@@ -146,7 +147,6 @@ export default function LoginPage() {
           <p>We do not sell your personal information to 3rd party corporations or data brokers.</p>
         </div>
       </LegalModal>
-
     </div>
   );
 }

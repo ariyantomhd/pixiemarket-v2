@@ -24,6 +24,7 @@ export interface Product {
   file_size: string | null;
   tech_stack: string[] | null;
   release_date: string | null;
+  sales_count?: number;
 }
 
 // Helper Type jika nanti butuh list produk tanpa deskripsi lengkap
