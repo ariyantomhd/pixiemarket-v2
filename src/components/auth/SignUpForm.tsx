@@ -157,7 +157,7 @@ export default function SignUpForm({ onOpenModal }: SignUpFormProps) {
           value={formData.password} 
           onChange={(e) => setFormData({...formData, password: e.target.value})} 
         />
-        <button type="button" onClick={() => setShowPass(!showPass)} className="absolute right-4 top-1/2 -translate-y-1/2 text-white/20 hover:text-white transition-colors">
+        <button type="button" onClick={() => setShowPass(!showPass)} className="absolute right-4 top-1/2 -translate-y-1/2 text-black hover:text-black/70 transition-colors">
           {showPass ? <EyeOff size={18} /> : <Eye size={18} />}
         </button>
       </div>

@@ -14,6 +14,13 @@ import { useAuth } from "@/context/AuthContext";
 import { deleteAuthSession } from "@/app/actions/auth";
 import { supabase } from "@/lib/supabase";
 
+// Interface untuk menghindari penggunaan 'any' pada metadata user
+interface UserMetadata {
+  full_name?: string;
+  avatar_url?: string;
+  name?: string;
+}
+
 function CartBadge() {
   const [mounted, setMounted] = useState(false);
   const items = useCartStore((state) => state.items);
@@ -44,7 +51,6 @@ export default function Navbar() {
   const { user, logout } = useAuth();
   const clearCart = useCartStore((state) => state.clearCart);
 
-  // Fungsi helper untuk menutup semua menu (dropdown & mobile)
   const closeMenus = () => {
     setIsOpen(false);
     setIsProfileOpen(false);
@@ -65,7 +71,6 @@ export default function Navbar() {
     }
   }, [logout, clearCart]);
 
-  // LOGIKA ANTI HANTU (Tetap di useEffect karena ini sinkronisasi dengan External System/DB)
   useEffect(() => {
     const syncWithDatabase = async () => {
       if (user) {
@@ -78,11 +83,16 @@ export default function Navbar() {
     syncWithDatabase();
   }, [user, handleLogout]); 
 
+  // --- Type-Safe Data Extraction ---
+  const metadata = (user as unknown as { user_metadata?: UserMetadata })?.user_metadata;
+  const displayName = metadata?.full_name || metadata?.name || user?.email?.split('@')[0] || "User";
+  const avatarUrl = metadata?.avatar_url;
+
   return (
-    <nav className="fixed top-0 left-0 right-0 z-[100] px-6 py-6">
+    <nav className="fixed top-0 left-0 right-0 z-[100] px-6 py-6 font-sans">
       <div className="max-w-7xl mx-auto flex items-center justify-between bg-slate-900/40 backdrop-blur-xl border border-white/5 px-6 py-3 rounded-[2rem] shadow-2xl">
         
-   {/* Brand Logo */}
+        {/* Brand Logo */}
         <Link href="/" onClick={closeMenus} className="flex items-center gap-3 group">
           <div className="relative w-12 h-12 group-hover:rotate-12 transition-transform duration-300">
             <Image
@@ -136,10 +146,10 @@ export default function Navbar() {
                   className="flex items-center gap-2 pl-1 pr-3 py-1 bg-white text-slate-950 rounded-full hover:bg-teal-400 transition-all group shadow-lg shadow-white/5"
                 >
                   <div className="w-8 h-8 rounded-full bg-slate-900 flex items-center justify-center text-teal-400 overflow-hidden relative border border-slate-200/10">
-                    {user.avatar_url ? (
+                    {avatarUrl ? (
                       <Image 
-                        src={user.avatar_url} 
-                        alt={user.name || "User"} 
+                        src={avatarUrl} 
+                        alt={displayName} 
                         fill 
                         className="object-cover" 
                         sizes="32px"
@@ -148,7 +158,9 @@ export default function Navbar() {
                       <UserIcon size={16} />
                     )}
                   </div>
-                  <span className="text-xs font-bold max-w-[80px] truncate">{user.name}</span>
+                  <span className="text-xs font-bold max-w-[100px] truncate uppercase">
+                    {displayName}
+                  </span>
                   <ChevronDown size={14} className={`transition-transform ${isProfileOpen ? 'rotate-180' : ''}`} />
                 </button>
 
@@ -207,6 +219,19 @@ export default function Navbar() {
             exit={{ opacity: 0, y: -20 }}
             className="md:hidden absolute top-28 left-6 right-6 bg-slate-900/95 backdrop-blur-3xl border border-white/10 p-6 rounded-[2rem] shadow-2xl flex flex-col gap-4"
           >
+             {/* Mobile User Info */}
+             {user && (
+               <div className="flex items-center gap-3 px-4 py-3 bg-white/5 rounded-2xl mb-2">
+                  <div className="w-10 h-10 rounded-full bg-teal-400 flex items-center justify-center text-slate-950 font-bold uppercase">
+                    {displayName.charAt(0)}
+                  </div>
+                  <div className="flex flex-col">
+                    <span className="text-white font-bold text-sm">{displayName}</span>
+                    <span className="text-slate-500 text-[10px]">{user.email}</span>
+                  </div>
+               </div>
+             )}
+
             {[
               { name: "Home", href: "/" },
               { name: "Product", href: "/products" },

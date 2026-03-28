@@ -1,20 +1,19 @@
 "use client";
 
 import Image from "next/image";
-import { ShoppingCart, Eye, Zap, ShoppingBag, Star } from "lucide-react";
+import { ShoppingCart, Zap, ShoppingBag, Star } from "lucide-react"; 
 import { Product } from "@/types/product";
 import { pixieBranding } from "@/lib/branding";
-import { getTechColor } from "@/lib/techColors";
+import { getTechColor } from "@/lib/techColors"; 
 import clsx from "clsx";
 
 interface ContentProps {
   product: Product;
   variant: "default" | "dark";
-  showSalesCount: boolean;
+  showSalesCount: boolean; 
   formattedPrice: string;
   pos: { x: number; y: number };
-  onPreview: (e: React.MouseEvent) => void;
-  onAddToCart: (e: React.MouseEvent) => void; // <--- SUDAH SINKRON
+  onAddToCart: (e: React.MouseEvent) => void;
 }
 
 export default function ProductCardContent({ 
@@ -23,10 +22,14 @@ export default function ProductCardContent({
   showSalesCount, 
   formattedPrice, 
   pos, 
-  onPreview,
-  onAddToCart // <--- TERIMA PROP DI SINI
+  onAddToCart 
 }: ContentProps) {
-  const displayImage = product.images?.[0] || "/placeholder.png";
+  
+  // GUARD CLAUSE: Kalau product undefined, jangan render apa-apa dulu
+  if (!product) return null;
+
+  // Gunakan optional chaining (?.) untuk jaga-jaga
+  const displayImage = product?.images?.[0] || "/placeholder.png";
 
   return (
     <div className={clsx(
@@ -36,7 +39,7 @@ export default function ProductCardContent({
         : "bg-slate-950/80 border-slate-800 shadow-2xl hover:border-teal-500/30"
     )}>
       
-      {/* Glow Effect Dynamis */}
+      {/* 1. Glow Effect Dynamis */}
       <div 
         className="absolute inset-0 opacity-0 group-hover:opacity-100 transition duration-500 pointer-events-none z-10"
         style={{ 
@@ -44,48 +47,38 @@ export default function ProductCardContent({
         }} 
       />
 
-      {/* Image Container */}
+      {/* 2. Image Container */}
       <div className="relative aspect-square overflow-hidden m-3 rounded-[2rem] bg-slate-900/50 border border-white/5">
         <Image 
           src={pixieBranding.img(displayImage)} 
-          alt={product.name} 
+          alt={product?.name || "Product Image"} 
           fill 
           unoptimized 
           className="object-cover transition-transform duration-700 group-hover:scale-110" 
         />
         
-        {/* Discount Badge */}
-        {product.discount_percentage && (
+        {/* DISKON BADGE */}
+        {product?.discount_percentage && (
           <div className="absolute top-4 left-4 z-20">
-            <span className="badge-sale px-3 py-1.5 rounded-lg shadow-lg">
-              -{product.discount_percentage}%
+            <span className="bg-gradient-to-r from-red-500 to-pink-500 text-white text-[10px] font-black px-3 py-1.5 rounded-lg shadow-lg">
+              -{product.discount_percentage}% OFF
             </span>
           </div>
         )}
 
-        {/* Trending Icon */}
-        {(product.is_trending || variant === "dark") && (
+        {/* ZAP ICON */}
+        {(product?.is_trending || variant === "dark") && (
           <div className="absolute top-4 right-4 bg-orange-500 text-white p-2 rounded-xl shadow-lg animate-pulse z-20">
-            < Zap size={14} fill="currentColor" />
+            <Zap size={14} fill="currentColor" />
           </div>
         )}
-        
-        <div className="absolute inset-0 bg-slate-950/60 opacity-0 group-hover:opacity-100 transition-all duration-300 flex items-center justify-center z-20 backdrop-blur-sm">
-          <button 
-            type="button"
-            onClick={onPreview} 
-            className="p-4 bg-white text-slate-950 rounded-2xl hover:bg-teal-500 hover:text-white transition transform hover:scale-110 shadow-2xl"
-          >
-            <Eye size={22} />
-          </button>
-        </div>
       </div>
 
-      {/* Content Details */}
+      {/* 3. Content Details */}
       <div className="p-5 pt-2 relative z-20">
         <div className="flex justify-between items-center mb-3">
           <span className="text-[9px] font-black uppercase tracking-[0.15em] text-teal-400 bg-teal-400/10 px-2.5 py-1 rounded-md">
-            {product.category || "Digital Asset"}
+            {product?.category || "Digital Asset"}
           </span>
 
           {showSalesCount && (
@@ -93,7 +86,7 @@ export default function ProductCardContent({
               <div className="flex items-center gap-1 bg-white/5 px-2 py-1 rounded-lg border border-white/5">
                 <ShoppingBag size={10} className="text-orange-400" />
                 <span className="text-[9px] font-black text-white italic tracking-tighter">
-                  {product.sales_count || 0} <span className="text-slate-500 font-medium">SOLD</span>
+                  {product?.sales_count || 0} <span className="text-slate-500 font-medium">SOLD</span>
                 </span>
               </div>
               <div className="flex items-center gap-0.5">
@@ -105,13 +98,12 @@ export default function ProductCardContent({
         </div>
 
         <h3 className="font-bold text-lg text-white transition line-clamp-1 group-hover:text-teal-300">
-          {product.name}
+          {product?.name}
         </h3>
         
-        {/* Tech Stack */}
         <div className="flex gap-2 mt-4 flex-wrap">
-          {product.tech_stack?.slice(0, 3).map((tech) => {
-            const color = getTechColor(tech);
+          {product?.tech_stack?.slice(0, 3).map((tech) => {
+            const color = getTechColor(tech); 
             return (
               <span 
                 key={tech} 
@@ -128,11 +120,11 @@ export default function ProductCardContent({
           })}
         </div>
 
-        {/* Pricing & CTA */}
+        {/* 4. Pricing & CTA */}
         <div className="mt-7 flex items-center justify-between">
-          <div>
-            {product.price > 0 && (
-              <p className="text-xs text-slate-500 line-through mb-0.5 tracking-tight font-medium">
+          <div className="flex-1">
+            {product?.discount_percentage && (
+              <p className="text-[10px] text-slate-500 line-through mb-0.5 font-medium italic opacity-70">
                 ${(product.price * 1.5).toFixed(2)}
               </p>
             )}
@@ -143,8 +135,13 @@ export default function ProductCardContent({
           
           <button 
             type="button"
-            onClick={onAddToCart} // <--- PANGGIL LANGSUNG DARI PROP
-            className="p-3.5 bg-gradient-to-br from-orange-500 to-orange-600 text-white rounded-2xl shadow-lg shadow-orange-500/20 hover:scale-110 active:scale-95 transition-all group/btn"
+            onClick={(e) => {
+              // PENTING: Menghentikan bubbling agar Link di parent tidak terpicu
+              e.stopPropagation(); 
+              e.preventDefault();
+              onAddToCart(e);
+            }}
+            className="p-3.5 bg-gradient-to-br from-orange-500 to-orange-600 text-white rounded-2xl shadow-lg shadow-orange-500/20 hover:scale-110 active:scale-95 transition-all group/btn relative z-30"
           >
             <ShoppingCart size={22} className="group-hover/btn:rotate-12 transition-transform" />
           </button>

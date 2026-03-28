@@ -143,7 +143,7 @@ export default function DocsManager() {
       <div className="xl:col-span-1 space-y-6">
         
         {/* Category Editor */}
-        <div className="bg-white/5 border border-white/10 rounded-[2rem] p-6 space-y-4 shadow-xl">
+        <div className=" border border-white/10 rounded-[2rem] p-6 space-y-4 shadow-xl">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <Layout className="text-teal-400" size={18} />
